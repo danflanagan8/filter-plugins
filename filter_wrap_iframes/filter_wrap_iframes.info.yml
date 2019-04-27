@@ -1,0 +1,9 @@
+name: Filter Wrap Iframes
+type: module
+description: 'Adds filter plugin that wraps iframes so they can be made responsive.'
+# core: 8.x
+package: filter
+version: VERSION
+core: '8.x'
+dependencies:
+  - filter

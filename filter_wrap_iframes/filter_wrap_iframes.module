@@ -1,0 +1,24 @@
+<?php
+use Drupal\Component\Utility\Html;
+
+/**
+ * Process callback for wrap iframes filter.
+ * This post was very helpful: https://stackoverflow.com/questions/8426391/wrap-all-images-with-a-div-using-domdocument
+ */
+function _filter_wrap_iframes_process($text) {
+
+  $html_dom = Html::load($text);
+  $iframes = $html_dom->getElementsByTagName('iframe');
+  foreach ($iframes as $iframe) {
+    $src = $iframe->getAttribute('src');
+    if (strpos($src, 'you') > -1 || strpos($src, 'vimeo') > -1) {
+      $new_div = $html_dom->createElement('div');
+      $new_div->setAttribute('class','filter-wrap-iframes');
+      $iframe->parentNode->replaceChild($new_div, $iframe);
+      $new_div->appendChild($iframe);
+    }
+  }
+
+  $text = Html::serialize($html_dom);
+  return $text;
+}

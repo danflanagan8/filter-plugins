@@ -1,0 +1,42 @@
+<?php
+use Drupal\Component\Utility\Html;
+
+/**
+ * Process callback for local image (style) filter.
+ * Just like _filter_html_image_secure_process except for
+ * code inside the if block.
+ */
+function _filter_html_image_style_secure_process($text) {
+  // Find the path (e.g. '/') to Drupal root.
+  $base_path = base_path();
+  $base_path_length = mb_strlen($base_path);
+
+  // Find the directory on the server where index.php resides.
+  $local_dir = \Drupal::root() . '/';
+
+  $html_dom = Html::load($text);
+  $images = $html_dom->getElementsByTagName('img');
+  foreach ($images as $image) {
+    $src = $image->getAttribute('src');
+    // Transform absolute image URLs to relative image URLs: prevent problems on
+    // multisite set-ups and prevent mixed content errors.
+    $image->setAttribute('src', file_url_transform_relative($src));
+
+    // Verify that $src starts with $base_path.
+    // This also ensures that external images cannot be referenced.
+    $src = $image->getAttribute('src');
+    if (mb_substr($src, 0, $base_path_length) === $base_path) {
+      /**
+       *  THIS IS WHERE THIS FILTER DIFFERS FROM FILTER_HTML_IMAGE_SECURE
+       *  IT DOES NOT CHECK THAT THE IMAGE IS A VALID FILE
+       *  That check fails for image style files.
+       */
+      continue;
+    }
+    // Allow modules and themes to replace an invalid image with an error
+    // indicator. See filter_filter_secure_image_alter().
+    \Drupal::moduleHandler()->alter('filter_secure_image', $image);
+  }
+  $text = Html::serialize($html_dom);
+  return $text;
+}

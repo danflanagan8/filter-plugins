@@ -1,0 +1,9 @@
+name: Filter External Links
+type: module
+description: 'Adds filter plugin that forces external links to open in new window.'
+# core: 8.x
+package: filter
+version: VERSION
+core: '8.x'
+dependencies:
+  - filter

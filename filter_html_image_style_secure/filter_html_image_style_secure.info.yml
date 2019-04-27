@@ -1,0 +1,9 @@
+name: Filter HTML Image Style Secure
+type: module
+description: 'Adds filter plugin that allows image styles to work my not calling @getimagesize.'
+# core: 8.x
+package: filter
+version: VERSION
+core: '8.x'
+dependencies:
+  - filter
